@@ -1,3 +1,4 @@
+import CCGSupertagging from './components/demos/CCGSupertagging';
 import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
 import TextualEntailment from './components/demos/TextualEntailment';
@@ -44,6 +45,11 @@ const modelGroups = [
         iconSrc: annotateIcon,
         defaultOpen: true,
         models: [
+            {
+                model: 'ccg-supertagging',
+                name: 'CCG Supertagging',
+                component: CCGSupertagging,
+            },
             {
                 model: 'named-entity-recognition',
                 name: 'Named Entity Recognition',
