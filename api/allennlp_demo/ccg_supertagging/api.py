@@ -12,8 +12,7 @@ import ccg.util.argparse as ap
 
 class MyModel(config.Model):
     def __init__(self):
-        args = ap.main()
-        self.model = CCGModel.load(args)
+        self.model = CCGModel.load(Namespace(model='../../CCG/models/addrmlp-att-rebank-r1', tasks='../../CCG/tasks/atomic_featurized_enc_attention_rebank'))
         self.reader = CCGReader(word_tag_delimiter='|')
 
     def load_predictor(self) -> Predictor:

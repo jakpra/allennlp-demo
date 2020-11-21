@@ -23,7 +23,7 @@ import '@allenai/varnish/dist/theme.css';
   <App /> Container
 *******************************************************************************/
 
-const DEFAULT_PATH = '/reading-comprehension';
+const DEFAULT_PATH = '/ccg-supertagging';
 
 // all routes in the menu
 let routes = [
@@ -41,7 +41,7 @@ the overall demo frontend or an individual model demo.
 Here's how it accomplishes that:
 
 If you request `/` (corresponding to https://demo.allennlp.org), you will get
-redirected to the default model (here, /reading-comprehension).
+redirected to the default model (here, /ccg-supertagging).
 
 The overall front-end service serves all routes that look like `/<model_name>`.
 When you request `/<model_name>`, you will be served the <Demo> component,
