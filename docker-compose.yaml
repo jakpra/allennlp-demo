@@ -25,9 +25,11 @@ services:
         # run it locally using this mechanism.
         build:
             context: api
-            dockerfile: ${MODEL_DOCKERFILE:-Dockerfile}
+            dockerfile: ${MODEL_DOCKERFILE}
             args:
                 MODULE: ${MODEL}
+                user: ${USER}
+                pass: ${PASS}
         environment:
             - FLASK_ENV=development
         volumes:

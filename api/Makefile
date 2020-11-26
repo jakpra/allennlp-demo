@@ -23,7 +23,10 @@ typecheck :
 	@if [ -f allennlp_demo/$*/Dockerfile ]; then \
 		echo "Using custom build from allennlp_demo/$*/Dockefile"; \
 		docker build \
+                        --build-arg user="$(shell cat ~/cred1.txt)" \
+                        --build-arg pass="$(shell cat ~/cred2.txt)" \
 			-f allennlp_demo/$*/Dockerfile \
+			--build-arg MODULE=$* \
 			-t $(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) .; \
 	else \
 		echo "Using default build from allennlp_demo/Dockerfile"; \

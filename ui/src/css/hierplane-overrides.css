@@ -22,6 +22,10 @@
   transform: rotateY(-180deg);
 }
 
+.hierplane__visualization-ccg__prev {
+  transform: rotateY(-180deg);
+}
+
 .hierplane__visualization-verbs__label {
   user-select: none;
 }
