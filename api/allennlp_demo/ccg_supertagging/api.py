@@ -70,17 +70,15 @@ class CCGSupertaggingModelEndpoint(http.ModelEndpoint):
 
         original_instances = self.predictor.labeled_json_to_labeled_instances(inputs)
 
-        original_text_field: TextField = original_instances[0][  # type: ignore
-            input_field_to_attack
-        ]
-        original_tokens = deepcopy(original_text_field.tokens)
-        final_tokens = []
-        for instance in original_instances:
-            final_tokens.append(
+        final_tokens = {}
+        original_tokens = {}
+        for idx, instance in sorted(original_instances.items()):
+            final_tokens[idx] = (
                 attacker._attack_instance(
                     inputs, instance, input_field_to_attack, grad_input_field, ignore_tokens
                 )
             )
+            original_tokens[idx] = deepcopy(instance[input_field_to_attack].tokens)
         return sanitize({"final": final_tokens, "original": original_tokens})
 
 

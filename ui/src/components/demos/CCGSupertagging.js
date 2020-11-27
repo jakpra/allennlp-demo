@@ -344,9 +344,9 @@ const TokenSpan = ({ token, index }) => {
 
     const focusToken = () => {
         if (index) {
-            document.getElementById('demoTabs').setMergedActiveKey(VisualizationType.WORD_TREES);
-            document.getElementById('wordTrees').setState({selectedIdx: index});
+            return null;
         }
+        return null;
     };
 
     const tag = token.tag;
@@ -424,22 +424,51 @@ const MySaliencyMaps = ({ interpretData, tokens, relevantTokenIdxs, interpretMod
 //    );
 };
 
+const arraysEqual = (_arr1, _arr2) => {
+    if (
+      !Array.isArray(_arr1)
+      || !Array.isArray(_arr2)
+      || _arr1.length !== _arr2.length
+      ) {
+        return false;
+      }
+    
+    const arr1 = _arr1.concat().sort();
+    const arr2 = _arr2.concat().sort();
+    
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] != arr2[i]) {
+            return false;
+         }
+    }
+    
+    return true;
+}
+
 const Attacks = ({ attackData, attackModel, responseData, tokens, relevantTokenIdxs }) => {
     let reducedInput;
     if (attackData && 'input_reduction' in attackData) {
         const reductionData = attackData.input_reduction;
-        const formattedReduced = reductionData.final.map((reduced, index) => (
-            <p key={index} style={{ display: 'flex', flexWrap: 'wrap' }}>
-                <strong>Reduced input for</strong>
-                <TokenSpan key={index} token={tokens[relevantTokenIdxs[index]]} />
-                <strong>:</strong> <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {reduced.join(' ')}
-                <br />
-            </p>
-        ));
-        reducedInput = {
-            original: reductionData.original.join(' '),
-            formattedReduced: formattedReduced,
-        };
+        const finalIdxs = Array(...Object.keys(reductionData.final));
+        console.log({finalIdxs, relevantTokenIdxs});
+        if (arraysEqual(finalIdxs, relevantTokenIdxs)) {
+            const formattedReduced = finalIdxs.map((idx, index) => {
+                return (
+                <p key={index} style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <strong>Reduced input for</strong>
+                    <TokenSpan key={index} token={tokens[idx]} />
+                    <strong>:</strong> <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {reductionData.final[idx].join(' ')}
+                    <br />
+                </p>
+                );
+            });
+            reducedInput = {
+                original: Object.values(reductionData.original).map((orig) => {
+                    return orig.join(' ');
+                }).join('\n'),
+                formattedReduced: formattedReduced,
+            };
+        }
     }
     return (
         <OutputField label="Model Attacks">
@@ -448,10 +477,11 @@ const Attacks = ({ attackData, attackModel, responseData, tokens, relevantTokenI
                     <InputReductionComponent
                         reducedInput={reducedInput}
                         reduceFunction={attackModel(
-                            relevantTokenIdxs.map((idx) => {  // used to be requestData, but we want to control which instances to attack
+                            relevantTokenIdxs.reduce((attack, idx) => {  // used to be requestData, but we want to control which instances to attack
                                 const inst = responseData[idx];
-                                return { words: inst.words, tags: inst.tags };
-                            }),
+                                attack[idx] = { words: inst.words, tags: inst.tags };
+                                return attack;
+                            }, {}),
                             INPUT_REDUCTION_ATTACKER,
                             NAME_OF_INPUT_TO_ATTACK,
                             NAME_OF_GRAD_INPUT
